@@ -1,0 +1,1 @@
+print("Hello from Docker + RUN lesson v2")
