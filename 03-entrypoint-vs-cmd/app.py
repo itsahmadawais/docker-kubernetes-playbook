@@ -1,0 +1,1 @@
+print("Docker ENTRYPOINT vs CMD lesson")
