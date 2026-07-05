@@ -2,9 +2,9 @@
 
 ## Objective
 
-The goal of this exercise is to understand the fundamental concepts behind Docker images, containers, and Dockerfiles by containerizing a simple Python application.
+The objective of this exercise is to understand the fundamentals of Docker by containerizing a simple Python application.
 
-Instead of memorizing Docker commands, this task focuses on building a mental model of how Docker works.
+Rather than memorizing commands, this task focuses on building a strong mental model of how Docker images, containers, Dockerfiles, image tags, and the build process work together.
 
 ---
 
@@ -19,17 +19,79 @@ Instead of memorizing Docker commands, this task focuses on building a mental mo
 
 ---
 
-## Application
+# Experiments
 
-**app.py**
+To understand how Docker containers behave, two Python applications were tested.
+
+## Experiment 1 - Short-Lived Process
 
 ```python
 print("Hello from Docker!")
 ```
 
+### Observation
+
+* The application printed `Hello from Docker!`.
+* The Python process exited immediately.
+* Since the main process completed, Docker automatically stopped the container.
+
+This demonstrates an important Docker concept:
+
+> A container remains alive only while its primary process is running.
+
 ---
 
-## Dockerfile
+## Experiment 2 - Long-Running Process
+
+```python
+import time
+
+while True:
+    print("Hello from Docker!")
+    time.sleep(5)
+```
+
+### Expected Behavior
+
+Since the Python process never exits, the container should continue running indefinitely.
+
+### Observation
+
+Initially, no output appeared while the container was running.
+
+Once the container was stopped, all log messages appeared at once.
+
+This behavior was caused by **Python output buffering**, not Docker.
+
+Python buffers stdout when it detects that it is running in a non-interactive environment.
+
+### Production Solutions
+
+Disable output buffering using one of the following approaches.
+
+Using an environment variable:
+
+```dockerfile
+ENV PYTHONUNBUFFERED=1
+```
+
+Using Python's unbuffered mode:
+
+```dockerfile
+CMD ["python", "-u", "app.py"]
+```
+
+Or flushing every print statement:
+
+```python
+print("Hello from Docker!", flush=True)
+```
+
+Using unbuffered logging is considered a best practice because Docker, Kubernetes, and cloud logging systems collect application logs from **stdout** and **stderr**.
+
+---
+
+# Dockerfile
 
 ```dockerfile
 FROM python:3.14
@@ -43,117 +105,239 @@ CMD ["python", "app.py"]
 
 ---
 
-## Dockerfile Breakdown
+# Dockerfile Breakdown
 
-### `FROM python:3.14`
+## `FROM python:3.14`
 
 Uses the official Python 3.14 image as the base image.
 
-Docker builds our image on top of this existing image instead of installing Python from scratch.
+Instead of installing Python manually, Docker builds the image on top of an existing Python image.
 
 ---
 
-### `WORKDIR /app`
+## `WORKDIR /app`
 
-Sets `/app` as the working directory inside the image.
+Sets `/app` as the current working directory inside the image.
 
-If the directory does not exist, Docker creates it automatically.
+If the directory does not already exist, Docker creates it automatically.
 
-All subsequent relative paths are resolved from this directory.
-
----
-
-### `COPY app.py .`
-
-Copies `app.py` from the **build context** (our local project directory) into the current working directory inside the image (`/app`).
-
-This demonstrates that the left side of `COPY` is the source on the host, while the right side is the destination inside the image.
+All relative paths used by subsequent Dockerfile instructions are resolved from this directory.
 
 ---
 
-### `CMD ["python", "app.py"]`
+## `COPY app.py .`
+
+Copies `app.py` from the **build context** into the current working directory (`/app`) inside the image.
+
+Important concept:
+
+* Left side → Source from the build context.
+* Right side → Destination inside the image.
+
+Example:
+
+```dockerfile
+COPY app.py .
+```
+
+Results in:
+
+```text
+/app/app.py
+```
+
+---
+
+## `CMD ["python", "app.py"]`
 
 Defines the default command executed when a container starts.
 
-It is **not executed during image build**. Instead, Docker stores it as metadata and runs it only when a container is created from the image.
+`CMD` is **not executed during image build**.
+
+Instead, Docker stores it as metadata and executes it whenever a container is created from the image.
 
 ---
 
-## Build the Image
+# Building the Image
 
 ```bash
 docker build -t hello-python .
 ```
 
-### Command Breakdown
+## Command Breakdown
 
-* `docker build` → Builds a Docker image.
-* `-t hello-python` → Tags the image as `hello-python:latest`.
-* `.` → Uses the current directory as the build context.
+### `docker build`
+
+Builds a Docker image from a Dockerfile.
 
 ---
 
-## Run the Container
+### `-t`
+
+`-t` stands for **tag**.
+
+It assigns a human-readable name to the image.
+
+Images follow this format:
+
+```text
+<image-name>:<tag>
+```
+
+Examples:
+
+```text
+hello-python:latest
+hello-python:v1
+hello-python:v2
+hello-python:1.0.0
+```
+
+If no tag is specified, Docker automatically uses the `latest` tag.
+
+Therefore, these commands are equivalent:
+
+```bash
+docker build -t hello-python .
+```
+
+```bash
+docker build -t hello-python:latest .
+```
+
+Using versioned tags is recommended for production because they support reproducible deployments and safe rollbacks.
+
+---
+
+### `.` (Build Context)
+
+The final argument specifies the **build context**.
+
+Docker sends every file inside the build context to the Docker Engine before the image build begins.
+
+The Dockerfile can only access files that are inside the build context.
+
+---
+
+## Using a Different Dockerfile
+
+By default, Docker searches for a file named:
+
+```text
+Dockerfile
+```
+
+If your Dockerfile has a different name or is located elsewhere, specify it using the `-f` option.
+
+Example:
+
+```bash
+docker build -t hello-python:v1 -f Dockerfile.dev .
+```
+
+or
+
+```bash
+docker build -t backend:v1 -f backend/Dockerfile backend/
+```
+
+Here:
+
+* `-f` specifies which Dockerfile should be used.
+* The last argument specifies the build context.
+
+These are independent of each other.
+
+---
+
+# Running the Container
 
 ```bash
 docker run hello-python
 ```
 
-Expected output:
+For **Experiment 1**, the output is:
 
 ```text
 Hello from Docker!
 ```
 
+The container exits immediately because the Python process finishes.
+
+For **Experiment 2**, the container continues running because the main Python process never exits.
+
 ---
 
-## Key Concepts Learned
+# Key Concepts Learned
 
-### Image vs Container
+## Images vs Containers
 
 An **image** is an immutable blueprint.
 
-A **container** is a running instance of an image.
+A **container** is a running instance of that image.
 
-Multiple containers can be created from the same image.
+Multiple containers can be created from a single image.
+
+Deleting a container does not delete the image.
 
 ---
 
-### Build Context
+## Build Context
 
-When running:
+Running:
 
 ```bash
 docker build .
 ```
 
-Docker sends the current directory to the Docker Engine as the build context.
+does **not** mean "find the Dockerfile in the current directory."
 
-The Dockerfile can only access files inside this build context.
+Instead, it means:
+
+> Use the current directory as the build context.
+
+Docker sends the build context to the Docker Engine, and the Dockerfile can only access files contained within it.
 
 ---
 
-### Image Layers
+## Image Layers
 
 Each Dockerfile instruction creates a new image layer.
 
-Docker caches these layers, allowing future builds to reuse unchanged layers and significantly reduce build times.
+Docker caches these layers to improve build performance.
+
+If a layer has not changed, Docker reuses it instead of rebuilding it.
+
+This is why ordering Dockerfile instructions correctly can significantly reduce build times.
 
 ---
 
-### Working Directory
+## Working Directory
 
-`WORKDIR` behaves similarly to running `cd` in Linux.
+`WORKDIR` behaves similarly to the Linux `cd` command.
 
-Relative paths used by `COPY`, `RUN`, `CMD`, and other instructions are resolved from this directory.
+Example:
+
+```dockerfile
+WORKDIR /app
+WORKDIR src
+```
+
+Results in:
+
+```text
+/app/src
+```
+
+Relative paths are resolved from the current working directory.
 
 ---
 
-### Container Lifecycle
+## Container Lifecycle
 
-A container remains running only while its main process is running.
+A container remains running only while its primary process is running.
 
-If the main process exits, the container stops.
+If the main process exits, Docker stops the container.
 
 This explains why:
 
@@ -161,50 +345,65 @@ This explains why:
 print("Hello")
 ```
 
-causes the container to exit immediately, while an infinite loop keeps it running.
+stops immediately, while:
+
+```python
+while True:
+    ...
+```
+
+keeps the container alive.
 
 ---
 
-### Python Output Buffering
+## Python Output Buffering
 
-During testing, we observed that Python buffered output inside the container.
+Python buffers standard output when running in a non-interactive environment.
 
-For production applications, unbuffered logging is recommended so logs are immediately available through Docker.
-
-Common approaches include:
-
-```dockerfile
-ENV PYTHONUNBUFFERED=1
-```
-
-or
-
-```dockerfile
-CMD ["python", "-u", "app.py"]
-```
+For production applications, unbuffered output is recommended so logs appear immediately in Docker and orchestration platforms.
 
 ---
 
-## Production Notes
+## Image Tags
 
-* Use meaningful image tags instead of relying on `latest`.
+Image tags are lightweight labels used to identify different versions of an image.
+
+Examples:
+
+```text
+hello-python:v1
+hello-python:v2
+hello-python:latest
+```
+
+Using versioned tags allows applications to be rolled back quickly without rebuilding images.
+
+---
+
+# Production Notes
+
+* Use a dedicated `WORKDIR` instead of relying on the base image's default directory.
 * Keep the build context as small as possible.
-* Organize application files using `WORKDIR`.
-* Write logs to `stdout`/`stderr` instead of log files inside the container.
-* Version images to enable reliable rollbacks during deployments.
+* Version Docker images instead of relying on the `latest` tag.
+* Treat Docker images as immutable artifacts.
+* Write logs to `stdout` and `stderr` rather than files inside the container.
+* Enable unbuffered logging for Python applications.
+* Organize Dockerfile instructions to maximize Docker's build cache.
 
 ---
 
-## Summary
+# Summary
 
-After completing this exercise, I understand:
+After completing this exercise, you should understand:
 
-* The difference between images and containers.
-* How Docker builds images.
-* What a build context is.
+
+* The difference between Docker images and containers.
+* How Docker builds an image.
+* What a build context is and why it matters.
 * How `FROM`, `WORKDIR`, `COPY`, and `CMD` work.
+* How Docker image tags are used for versioning.
 * Why containers stop when their main process exits.
-* Why Python output buffering matters in containerized applications.
-* Why image tagging is important for versioning and production rollbacks.
+* Why Python output buffering affects Docker logs.
+* Why versioned image tags simplify production deployments and rollbacks.
 
-This exercise establishes the foundation for the next topic: understanding `RUN`, image layers, Docker build caching, and writing production-ready Dockerfiles.
+This exercise establishes the foundation for the next topic: understanding `RUN`, Docker image layers, build caching, and writing production-ready Dockerfiles.
