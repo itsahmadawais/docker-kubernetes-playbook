@@ -1,0 +1,5 @@
+services:
+  api:
+    image: my-api:1.0.0
+    ports:
+      - "8000:8000"
