@@ -1,0 +1,12 @@
+FROM python:3.14
+
+WORKDIR /app
+
+# It copies everyting to WORKDIR
+# Since app.py is changed, it invalidates the cache
+# and all the following layers are re-built.
+COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "app.py"]

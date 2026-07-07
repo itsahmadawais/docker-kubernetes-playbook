@@ -1,0 +1,14 @@
+FROM python:3.14
+
+WORKDIR /app
+
+# It copies only the requirements.txt file
+# Since it is not changed, the cache is not invalidated
+# and the following layers are not re-built.
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]
