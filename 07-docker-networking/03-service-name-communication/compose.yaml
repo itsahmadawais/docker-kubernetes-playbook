@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    environment:
+      DB_HOST: postgres-db
+    depends_on:
+      - postgres-db
+
+  postgres-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres

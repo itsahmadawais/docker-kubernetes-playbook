@@ -1,0 +1,11 @@
+services:
+  api:
+    image: python:3.14
+    command: sleep infinity
+
+  postgres-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
