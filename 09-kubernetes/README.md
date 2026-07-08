@@ -1,4 +1,4 @@
-#  09 — Why Kubernetes (K8s)?
+# 🧩 09 — Why Kubernetes (K8s)?
 
 ## 🎯 Goal
 
@@ -133,7 +133,7 @@ Docker solves one problem:
 
 > **How do I package and run an application inside a container?**
 
-Kubernetes solves another:
+Kubernetes (often abbreviated as **K8s**) solves another:
 
 > **How do I manage hundreds or thousands of containers automatically?**
 
@@ -164,6 +164,32 @@ If they don't match, Kubernetes takes action automatically.
 
 ---
 
+## 🧠 What Is a Pod?
+
+Before going further, let's introduce one important Kubernetes concept.
+
+A **Pod** is the smallest deployable unit in Kubernetes.
+
+For now, you can think of a Pod as the Kubernetes equivalent of running a Docker container.
+
+```text
+Docker
+Container
+
+Kubernetes
+Pod
+```
+
+In most applications, a Pod contains a single application container, which is why you'll often hear:
+
+> **One Pod ≈ One Container**
+
+This is a useful mental model while learning Kubernetes. Later, you'll discover that a Pod can contain multiple containers that work together.
+
+For now, whenever you see the word **Pod**, think of it as the unit Kubernetes creates, schedules, and manages.
+
+---
+
 ## Example
 
 Desired state:
@@ -184,7 +210,7 @@ Pod 5 ✅
 
 Kubernetes notices that only four Pods are running.
 
-It automatically creates a replacement until the desired state is restored.
+Without anyone manually intervening, it creates a replacement Pod until the desired state is restored.
 
 ---
 
@@ -222,14 +248,14 @@ Container
      │
      ▼
 Kubernetes
- • Schedules containers
+ • Schedules Pods
  • Restarts failed workloads
  • Scales applications
  • Performs rolling updates
  • Monitors application health
 ```
 
-Docker and Kubernetes work together—they solve different problems.
+Docker and Kubernetes complement each other—they solve different problems.
 
 ---
 
@@ -241,4 +267,6 @@ Kubernetes helps you operate containerized applications reliably at scale.
 
 Rather than manually managing containers, you describe the desired state of your application, and Kubernetes continuously works to make reality match that description.
 
-This declarative approach is the foundation of everything you'll learn in the upcoming Kubernetes modules.
+Understanding this declarative approach is the foundation of Kubernetes.
+
+In the next module, we'll look under the hood and explore **how Kubernetes works internally** before creating our first Pod.
