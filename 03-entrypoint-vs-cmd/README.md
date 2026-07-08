@@ -1,4 +1,4 @@
-# 03 - ENTRYPOINT vs CMD
+# 📦 03 - ENTRYPOINT vs CMD
 
 ## Objective
 

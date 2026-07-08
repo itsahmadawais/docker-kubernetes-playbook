@@ -1,4 +1,4 @@
-# 📦 Module 05 — Docker Compose
+# 📦 05 — Docker Compose
 
 ## 🎯 Learning Objective
 

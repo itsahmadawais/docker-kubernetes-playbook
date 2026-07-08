@@ -1,4 +1,4 @@
-# 🧩 08 — Production-Ready Docker Images
+# 📦 08 — Production-Ready Docker Images
 
 ## 🎯 Learning Objectives
 

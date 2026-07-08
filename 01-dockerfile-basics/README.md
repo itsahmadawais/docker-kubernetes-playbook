@@ -1,4 +1,4 @@
-# 01 - Dockerfile Basics
+# 📦 01 - Dockerfile Basics
 
 ## Objective
 

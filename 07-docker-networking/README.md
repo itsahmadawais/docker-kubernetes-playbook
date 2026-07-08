@@ -1,4 +1,4 @@
-# 📦 Module 07 — Docker Networking
+# 📦 07 — Docker Networking
 
 ## Overview
 

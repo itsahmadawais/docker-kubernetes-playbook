@@ -1,4 +1,4 @@
-# 🧩 09 — Why Kubernetes (K8s)?
+# 📦 09 — Why Kubernetes (K8s)?
 
 ## 🎯 Goal
 

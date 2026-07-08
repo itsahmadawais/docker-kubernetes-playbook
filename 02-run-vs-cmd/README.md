@@ -1,4 +1,4 @@
-# 02 - RUN vs Layers & Docker Build Cache
+# 📦 02 - RUN vs Layers & Docker Build Cache
 
 ## Objective
 

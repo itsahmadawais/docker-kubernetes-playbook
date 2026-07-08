@@ -1,4 +1,4 @@
-# 04 - Docker Networking Basics
+# 📦 04 - Docker Networking Basics
 
 ## Objective
 

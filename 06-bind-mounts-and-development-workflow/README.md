@@ -1,4 +1,4 @@
-# 📦 Module 06 — Bind Mounts, Live Development & Compose Overrides
+# 📦 06 — Bind Mounts, Live Development & Compose Overrides
 
 ---
 
