@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: nginx-init-pod
+
+spec:
+  initContainers:
+    - name: wait-for-start
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for 15 seconds..."
+          sleep 15
+          echo "Initialization complete."
+
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
