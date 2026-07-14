@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: fastapi-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: fastapi
+
+  template:
+    metadata:
+      labels:
+        app: fastapi
+
+    spec:
+      containers:
+        - name: fastapi
+          image: fastapi-pv:latest
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8000
+
+          volumeMounts:
+            - name: app-storage
+              mountPath: /data
+
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: fastapi-pvc
