@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ include "fastapi-chart.fullname" . }}
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: {{ include "fastapi-chart.name" . }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ include "fastapi-chart.name" . }}
+
+    spec:
+      containers:
+        - name: fastapi
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+
+          resources:
+{{ toYaml .Values.resources | indent 12 }}

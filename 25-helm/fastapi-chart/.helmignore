@@ -1,0 +1,9 @@
+.git/
+.gitignore
+
+.vscode/
+
+*.swp
+*.bak
+
+README.md
