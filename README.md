@@ -5,6 +5,7 @@
 ![Helm](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+
 ![License](https://img.shields.io/github/license/itsahmadawais/docker-kubernetes-playbook?style=flat-square)
 
 A hands-on, project-based learning repository for mastering **Docker** and **Kubernetes** through practical engineering exercises.
