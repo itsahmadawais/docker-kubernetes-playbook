@@ -6,11 +6,6 @@
 ![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 
-![License](https://img.shields.io/github/license/<username>/docker-kubernetes-playbook?style=flat-square)
-![Stars](https://img.shields.io/github/stars/<username>/docker-kubernetes-playbook?style=flat-square)
-![Forks](https://img.shields.io/github/forks/<username>/docker-kubernetes-playbook?style=flat-square)
-![Issues](https://img.shields.io/github/issues/<username>/docker-kubernetes-playbook?style=flat-square)
-
 A hands-on, project-based learning repository for mastering **Docker** and **Kubernetes** through practical engineering exercises.
 
 Rather than memorizing commands or copying configuration files, this playbook focuses on building a strong mental model of how containerized applications work—from writing your first Dockerfile to deploying scalable, production-ready applications with Kubernetes.
